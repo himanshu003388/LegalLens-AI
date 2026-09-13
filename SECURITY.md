@@ -16,7 +16,7 @@ LegalLens AI adheres strictly to an **ephemeral data retention model**:
 
 ## 2. Personally Identifiable Information (PII) Redaction
 
-Prior to passing any text to GenAI services (OpenAI or Anthropic), LegalLens executes a deterministic PII sanitization pipeline:
+Prior to passing any text to GenAI services (Google Gemini, OpenAI, or Anthropic), LegalLens executes a deterministic PII sanitization pipeline:
 - **Social Security Numbers (SSNs)**: Detected via `/\b\d{3}[- ]?\d{2}[- ]?\d{4}\b/g` and replaced with `[REDACTED_SSN_X]`.
 - **Credit & Debit Cards**: Detected via `/\b(?:\d{4}[- ]?){3}\d{4}\b/g` and replaced with `[REDACTED_CARD_X]`.
 - **Email Addresses**: Detected via standard RFC-5322 regex and replaced with `[REDACTED_EMAIL_X]`.
@@ -58,9 +58,9 @@ When depleted, the server responds with **HTTP 429 Too Many Requests**, providin
 
 ## 5. API Key Protection & Server-Side Isolation
 
-- All OpenAI (`OPENAI_API_KEY`) and Anthropic (`ANTHROPIC_API_KEY`) credentials reside exclusively in server-side environment variables (`.env.local`).
+- All Google Gemini (`GEMINI_API_KEY`), OpenAI (`OPENAI_API_KEY`), and Anthropic (`ANTHROPIC_API_KEY`) credentials reside exclusively in server-side environment variables (`.env.local`).
 - No private API keys or secrets are ever bundled into client-side JavaScript or emitted in HTTP responses.
-- Users supplying ephemeral session keys do so only through client-side session storage which communicates with the backend via isolated server-side proxy routes.
+- Users supplying ephemeral session keys do so only through client-side session/local storage which communicates with the backend via isolated server-side proxy routes.
 
 ---
 
@@ -74,5 +74,5 @@ X-Frame-Options: DENY
 X-Content-Type-Options: nosniff
 Referrer-Policy: strict-origin-when-cross-origin
 Permissions-Policy: camera=(), microphone=(), geolocation=()
-Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-eval' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: https:; connect-src 'self' https://api.openai.com https://api.anthropic.com;
+Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-eval' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: https:; connect-src 'self' https://api.openai.com https://api.anthropic.com https://generativelanguage.googleapis.com;
 ```

@@ -49,7 +49,19 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const { fileName, text, anonymizePII } = validation.data;
+    const { fileName, text, anonymizePII, apiKey, provider } = validation.data;
+
+    // Extract API key and provider preference from body or request headers
+    const userApiKey =
+      apiKey ||
+      req.headers.get("x-gemini-api-key") ||
+      req.headers.get("x-api-key") ||
+      undefined;
+
+    const userProvider =
+      provider ||
+      req.headers.get("x-ai-provider") ||
+      undefined;
 
     // 3. Privacy & PII sanitization
     let processedText = text;
@@ -62,7 +74,7 @@ export async function POST(req: NextRequest) {
     }
 
     // 4. Document intelligence analysis
-    const analysis = await analyzeLegalDocument(fileName, processedText);
+    const analysis = await analyzeLegalDocument(fileName, processedText, userApiKey, userProvider);
 
     return NextResponse.json(
       {

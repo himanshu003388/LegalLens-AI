@@ -3,6 +3,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import { Send, Sparkles, MessageSquare, Quote, Bot, User, CornerDownLeft } from "lucide-react";
 import { ChatMessage, Citation } from "@/lib/types/legal";
+import { getStoredApiKey, getStoredProvider, getApiKeyHeaders } from "@/lib/security/client-keys";
 
 interface ChatPanelProps {
   documentText: string;
@@ -10,6 +11,8 @@ interface ChatPanelProps {
 }
 
 export default function ChatPanel({ documentText, documentTitle }: ChatPanelProps) {
+  const [activeEngine, setActiveEngine] = useState("Streaming Q&A");
+
   const [messages, setMessages] = useState<ChatMessage[]>([
     {
       id: "msg_welcome",
@@ -31,6 +34,20 @@ export default function ChatPanel({ documentText, documentTitle }: ChatPanelProp
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, isStreaming]);
+
+  useEffect(() => {
+    const key = getStoredApiKey();
+    const provider = getStoredProvider();
+    if (provider === "gemini" || key.startsWith("AIza")) {
+      setActiveEngine(key ? "Gemini 1.5 Flash" : "Gemini / Local Engine");
+    } else if (provider === "openai") {
+      setActiveEngine(key ? "GPT-4o Streaming" : "Local Engine");
+    } else if (provider === "anthropic") {
+      setActiveEngine(key ? "Claude 3.5 Streaming" : "Local Engine");
+    } else {
+      setActiveEngine("Local Engine Streaming");
+    }
+  }, []);
 
   const handleAsk = async (questionText: string) => {
     if (!questionText.trim() || isStreaming) return;
@@ -59,12 +76,20 @@ export default function ChatPanel({ documentText, documentTitle }: ChatPanelProp
     ]);
 
     try {
+      const apiKey = getStoredApiKey() || undefined;
+      const provider = getStoredProvider() || undefined;
+
       const response = await fetch("/api/chat", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          ...getApiKeyHeaders(),
+        },
         body: JSON.stringify({
           question: questionText,
           documentText,
+          apiKey,
+          provider,
         }),
       });
 
@@ -147,8 +172,8 @@ export default function ChatPanel({ documentText, documentTitle }: ChatPanelProp
         </div>
 
         <div className="flex items-center gap-1.5 text-xs text-slate-500 dark:text-slate-400 bg-white dark:bg-slate-900 px-2.5 py-1 rounded-full border border-slate-200 dark:border-slate-700">
-          <Sparkles className="w-3.5 h-3.5 text-amber-500" />
-          <span>Real-time Streaming</span>
+          <Sparkles className="w-3.5 h-3.5 text-cyan-500" />
+          <span>{activeEngine}</span>
         </div>
       </div>
 

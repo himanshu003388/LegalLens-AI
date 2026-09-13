@@ -10,6 +10,7 @@ import ActionChecklist from "@/components/ActionChecklist";
 import LawyerPrepKit from "@/components/LawyerPrepKit";
 import { DocumentAnalysis } from "@/lib/types/legal";
 import { FileText, ShieldAlert, MessageSquare, CheckSquare, Briefcase, RefreshCw, AlertCircle } from "lucide-react";
+import { getStoredApiKey, getStoredProvider, getApiKeyHeaders } from "@/lib/security/client-keys";
 
 export default function HomePage() {
   const [currentText, setCurrentText] = useState<string>("");
@@ -26,13 +27,21 @@ export default function HomePage() {
     setErrorMessage("");
 
     try {
+      const apiKey = getStoredApiKey() || undefined;
+      const provider = getStoredProvider() || undefined;
+
       const res = await fetch("/api/analyze", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          ...getApiKeyHeaders(),
+        },
         body: JSON.stringify({
           fileName,
           text,
           anonymizePII,
+          apiKey,
+          provider,
         }),
       });
 

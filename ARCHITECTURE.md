@@ -31,7 +31,7 @@ flowchart TD
 
     subgraph AI["GenAI Intelligence Layer (Hybrid Engine)"]
         Dispatcher{"Key Available?"}
-        LiveLLM["OpenAI GPT-4o / Claude 3.5 Sonnet\n(Streaming SSE & JSON Extraction)"]
+        LiveLLM["Google Gemini 1.5 Flash / OpenAI GPT-4o / Claude 3.5\n(Streaming SSE & JSON Extraction)"]
         LocalEngine["LegalLens Deterministic NLP Engine\n(Rule AST, Flesch-Kincaid, Risk Radar)"]
     end
 
@@ -42,7 +42,7 @@ flowchart TD
     PIIRedactor --> Parser
     Parser --> Chunker
     Chunker --> Dispatcher
-    Dispatcher -- "Yes (API Key Provided)" --> LiveLLM
+    Dispatcher -- "Yes (Gemini / OpenAI / Anthropic Key)" --> LiveLLM
     Dispatcher -- "No (Zero-Key Demo)" --> LocalEngine
     LiveLLM --> UI
     LocalEngine --> UI
@@ -69,7 +69,7 @@ flowchart TD
 - **Citation Anchors**: When questions are asked, the retrieval engine scores chunks against query terms, extracts a 150-character contextual snippet, and generates a grounded citation object referencing the exact section title and quote.
 
 ### 2.3 Hybrid GenAI Dispatcher
-- **Live LLM Integration**: When `OPENAI_API_KEY` or `ANTHROPIC_API_KEY` is present in `.env.local` or session settings, requests are routed to OpenAI (`gpt-4o` / `gpt-4o-mini`) or Anthropic (`claude-3-5-sonnet`) with streaming Server-Sent Events (SSE).
+- **Live LLM Integration**: When `GEMINI_API_KEY`, `OPENAI_API_KEY`, or `ANTHROPIC_API_KEY` is present in `.env.local` or user session settings, requests are routed to **Google Gemini 1.5 Flash** (`gemini-1.5-flash`), OpenAI (`gpt-4o` / `gpt-4o-mini`), or Anthropic (`claude-3-5-sonnet`) with streaming Server-Sent Events (SSE) and strict JSON schema responses.
 - **Local Intelligence Engine**: When running in zero-key evaluator mode, the built-in deterministic legal intelligence engine extracts clauses across 7 categories, calculates Flesch-Kincaid reading scores, flags omitted protections (e.g. missing liability caps, missing cure periods), and streams grounded responses.
 
 ### 2.4 Contract Comparison & Diff Engine

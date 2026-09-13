@@ -46,10 +46,22 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const { question, documentText } = validation.data;
+    const { question, documentText, apiKey, provider } = validation.data;
+
+    // Extract API key and provider preference from body or request headers
+    const userApiKey =
+      apiKey ||
+      req.headers.get("x-gemini-api-key") ||
+      req.headers.get("x-api-key") ||
+      undefined;
+
+    const userProvider =
+      provider ||
+      req.headers.get("x-ai-provider") ||
+      undefined;
 
     // 3. Initiate grounded streaming completion
-    const { stream } = await streamCitedAnswer(question, documentText);
+    const { stream } = await streamCitedAnswer(question, documentText, userApiKey, userProvider);
 
     return new Response(stream, {
       headers: {
