@@ -2,6 +2,7 @@
  * @file rate-limiter.ts
  * @description In-memory token bucket rate limiter for API protection.
  * Regulates request velocity per client IP to mitigate denial-of-service and API abuse.
+ * Includes automatic periodic eviction of stale buckets to prevent memory leaks.
  */
 
 interface TokenBucket {
@@ -13,6 +14,12 @@ interface TokenBucket {
  * In-memory state store mapping client identifiers to token buckets.
  */
 const clientBuckets = new Map<string, TokenBucket>();
+
+/**
+ * Maximum idle time before an inactive bucket is evicted from memory (10 minutes).
+ */
+const MAX_BUCKET_IDLE_MS = 10 * 60 * 1000;
+let lastCleanupTimestamp = Date.now();
 
 /**
  * Configuration options for the Token Bucket rate limiter.
@@ -40,6 +47,35 @@ export const CHAT_LIMIT_CONFIG: RateLimiterOptions = {
 };
 
 /**
+ * Removes inactive client buckets to prevent unbounded memory growth over long server uptime.
+ */
+export function cleanExpiredBuckets(force: boolean = false): number {
+  const now = Date.now();
+  if (!force && now - lastCleanupTimestamp < 60_000) {
+    return 0; // Run at most once per minute unless forced
+  }
+
+  let evicted = 0;
+  clientBuckets.forEach((bucket, clientId) => {
+    if (now - bucket.lastRefillTimestamp > MAX_BUCKET_IDLE_MS) {
+      clientBuckets.delete(clientId);
+      evicted++;
+    }
+  });
+
+  lastCleanupTimestamp = now;
+  return evicted;
+}
+
+/**
+ * Resets all rate limiter state. Primarily used in unit tests for clean isolation.
+ */
+export function resetRateLimiter(): void {
+  clientBuckets.clear();
+  lastCleanupTimestamp = Date.now();
+}
+
+/**
  * Evaluates whether a client request is permitted under token bucket rate constraints.
  *
  * @param clientId Unique identifier for the client (e.g., IP address or session token)
@@ -50,6 +86,8 @@ export function checkRateLimit(
   clientId: string,
   options: RateLimiterOptions = UPLOAD_LIMIT_CONFIG
 ): { allowed: boolean; remaining: number; retryAfterSeconds: number } {
+  cleanExpiredBuckets();
+
   const now = Date.now();
   let bucket = clientBuckets.get(clientId);
 
@@ -96,16 +134,22 @@ export function checkRateLimit(
 }
 
 /**
- * Extracts a client identifier from request headers (e.g. x-forwarded-for, x-real-ip)
+ * Extracts a client identifier from request headers (Cloudflare, proxies, x-forwarded-for, x-real-ip)
  * or defaults to a fallback localhost key.
  *
  * @param headers Standard web Request Headers
  * @returns Sanitized client string identifier
  */
 export function getClientIdentifier(headers: Headers): string {
+  const cfConnectingIp = headers.get("cf-connecting-ip");
+  if (cfConnectingIp) {
+    return cfConnectingIp.trim();
+  }
+
   const forwardedFor = headers.get("x-forwarded-for");
   if (forwardedFor) {
     return forwardedFor.split(",")[0].trim();
   }
+
   return headers.get("x-real-ip") || "anonymous-client";
 }

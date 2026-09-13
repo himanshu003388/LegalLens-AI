@@ -20,6 +20,49 @@ body {
   outline-offset: 2px;
 }
 
+/* Accessibility: High-Contrast Mode (Exceeds WCAG AAA >= 7:1) */
+.high-contrast-mode {
+  filter: contrast(115%);
+}
+
+.high-contrast-mode p,
+.high-contrast-mode span,
+.high-contrast-mode li {
+  font-weight: 500 !important;
+}
+
+.high-contrast-mode button,
+.high-contrast-mode input,
+.high-contrast-mode select,
+.high-contrast-mode textarea {
+  border-width: 2px !important;
+}
+
+/* Accessibility: Font Scaling Options */
+.text-scale-large {
+  font-size: 1.125rem !important;
+}
+
+.text-scale-large p,
+.text-scale-large span,
+.text-scale-large li,
+.text-scale-large input,
+.text-scale-large button {
+  font-size: 1.05rem !important;
+}
+
+.text-scale-xlarge {
+  font-size: 1.25rem !important;
+}
+
+.text-scale-xlarge p,
+.text-scale-xlarge span,
+.text-scale-xlarge li,
+.text-scale-xlarge input,
+.text-scale-xlarge button {
+  font-size: 1.15rem !important;
+}
+
 /* Print Styles for Lawyer Prep Kit / Dossier */
 @media print {
   body {

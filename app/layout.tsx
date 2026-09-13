@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import DisclaimerBanner from "@/components/DisclaimerBanner";
 import Header from "@/components/Header";
+import { AnalysisProvider } from "@/context/AnalysisContext";
 
 export const metadata: Metadata = {
   title: "LegalLens AI — Legal Document Intelligence & Access",
@@ -26,16 +27,18 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className="min-h-screen flex flex-col bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 antialiased">
-        {/* Permanent visible non-legal-advice banner */}
-        <DisclaimerBanner />
+        <AnalysisProvider>
+          {/* Permanent visible non-legal-advice banner */}
+          <DisclaimerBanner />
 
-        {/* Global application header */}
-        <Header />
+          {/* Global application header */}
+          <Header />
 
-        {/* Main Content Area */}
-        <main id="main-content" className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          {children}
-        </main>
+          {/* Main Content Area */}
+          <main id="main-content" className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            {children}
+          </main>
+        </AnalysisProvider>
 
         {/* Authoritative Accessible Footer */}
         <footer className="bg-slate-900 border-t border-slate-800 text-slate-400 text-xs py-8 print:hidden">

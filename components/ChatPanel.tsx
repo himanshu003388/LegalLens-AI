@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, useMemo } from "react";
 import { Send, Sparkles, MessageSquare, Quote, Bot, User, CornerDownLeft } from "lucide-react";
 import { ChatMessage, Citation } from "@/lib/types/legal";
 import { getStoredApiKey, getStoredProvider, getApiKeyHeaders } from "@/lib/security/client-keys";
@@ -8,6 +8,72 @@ import { getStoredApiKey, getStoredProvider, getApiKeyHeaders } from "@/lib/secu
 interface ChatPanelProps {
   documentText: string;
   documentTitle: string;
+}
+
+function getDynamicStarterQuestions(title: string, text: string): string[] {
+  const lowerTitle = title.toLowerCase();
+  const lowerText = text.toLowerCase();
+
+  if (
+    lowerTitle.includes("nda") ||
+    lowerTitle.includes("non-disclosure") ||
+    lowerText.includes("confidential information")
+  ) {
+    return [
+      "What is the exact duration of my confidentiality obligations?",
+      "Can I share confidential information with external contractors?",
+      "What exceptions apply if information is already in the public domain?",
+      "What happens to residual knowledge or general business skills?",
+    ];
+  }
+
+  if (
+    lowerTitle.includes("lease") ||
+    lowerTitle.includes("rental") ||
+    lowerText.includes("premises") ||
+    lowerText.includes("landlord")
+  ) {
+    return [
+      "Can the landlord increase rent or fees during the initial lease term?",
+      "What are the specific conditions for receiving my security deposit back?",
+      "Who is responsible for HVAC, structural repairs, and routine maintenance?",
+      "What notice is required if I do not intend to renew the lease?",
+    ];
+  }
+
+  if (
+    lowerTitle.includes("saas") ||
+    lowerTitle.includes("software") ||
+    lowerTitle.includes("service") ||
+    lowerText.includes("services agreement")
+  ) {
+    return [
+      "Are there uncapped liability or indemnity obligations for either party?",
+      "What uptime guarantees, warranties, or SLA credits are specified?",
+      "Who owns custom intellectual property and data created during performance?",
+      "What happens if I need to terminate for convenience or breach?",
+    ];
+  }
+
+  if (
+    lowerTitle.includes("employment") ||
+    lowerTitle.includes("consult") ||
+    lowerText.includes("non-compete")
+  ) {
+    return [
+      "Are there restrictive non-compete or non-solicitation covenants?",
+      "What severance, notice periods, or termination terms apply?",
+      "How are intellectual property assignments and inventions handled?",
+      "What are the payment milestones and expense reimbursement guidelines?",
+    ];
+  }
+
+  return [
+    "What happens if I need to terminate this agreement early?",
+    "Are there any uncapped liability or indemnification clauses?",
+    "What are my exact payment deadlines and late penalty fees?",
+    "What governing law and dispute jurisdiction apply?",
+  ];
 }
 
 export default function ChatPanel({ documentText, documentTitle }: ChatPanelProps) {
@@ -25,11 +91,10 @@ export default function ChatPanel({ documentText, documentTitle }: ChatPanelProp
   const [isStreaming, setIsStreaming] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  const starterQuestions = [
-    "What happens if I need to terminate this agreement early?",
-    "Are there any uncapped liability or indemnity clauses?",
-    "What are my exact payment deadlines and late penalty fees?",
-  ];
+  const starterQuestions = useMemo(
+    () => getDynamicStarterQuestions(documentTitle, documentText),
+    [documentTitle, documentText]
+  );
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });

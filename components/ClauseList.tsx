@@ -2,16 +2,69 @@
 
 import React, { useState } from "react";
 import { Clause, RiskLevel, ClauseCategory } from "@/lib/types/legal";
-import { AlertTriangle, ChevronDown, ChevronUp, FileCode, CheckCircle, ShieldAlert } from "lucide-react";
+import {
+  AlertTriangle,
+  ChevronDown,
+  ChevronUp,
+  FileCode,
+  CheckCircle,
+  ShieldAlert,
+  Copy,
+  Check,
+} from "lucide-react";
 
 interface ClauseListProps {
   clauses: Clause[];
+}
+
+function getNegotiationPlaybook(clause: Clause): { strategy: string; counterLanguage: string } {
+  const cat = clause.category;
+  if (cat.includes("Liability") || cat.includes("Indemnif")) {
+    return {
+      strategy: "Insert an aggregate liability cap tied to trailing fees paid and eliminate unilateral uncapped exposure.",
+      counterLanguage:
+        "Notwithstanding anything to the contrary in this Agreement, each party's maximum aggregate liability arising out of or related to this Agreement shall not exceed the total fees actually paid or payable by Client under this Agreement during the twelve (12) month period immediately preceding the event giving rise to liability. Neither party shall be liable for consequential, indirect, or punitive damages.",
+    };
+  }
+  if (cat.includes("Termination") || cat.includes("Renewal")) {
+    return {
+      strategy: "Provide bilateral termination rights and eliminate surprise automatic renewal with a mandatory 60-day notice window.",
+      counterLanguage:
+        "Either party may terminate this Agreement upon sixty (60) days prior written notice. In the event of an alleged material breach, the non-breaching party shall provide written notice specifying the breach, and the breaching party shall have thirty (30) calendar days to cure such breach prior to termination taking effect.",
+    };
+  }
+  if (cat.includes("Intellectual Property") || cat.includes("Confidentiality")) {
+    return {
+      strategy: "Clearly carve out pre-existing IP and ensure standard public domain exceptions are explicitly mutual.",
+      counterLanguage:
+        "Each party retains sole ownership of its pre-existing intellectual property, proprietary tools, and standard methodologies. Confidentiality obligations shall strictly exclude any information that is or becomes publicly known through no wrongful act of the Receiving Party.",
+    };
+  }
+  if (cat.includes("Payment") || cat.includes("Financial")) {
+    return {
+      strategy: "Establish Net 30 payment milestones and restrict late fees to reasonable statutory interest on undisputed charges only.",
+      counterLanguage:
+        "Invoices shall be payable within thirty (30) days of receipt. Client may withhold payment of amounts disputed in good faith, provided Client gives prompt written notice within fifteen (15) days of invoice receipt. Undisputed amounts shall be paid on schedule.",
+    };
+  }
+  return {
+    strategy: "Propose reciprocal terms requiring reasonable commercial efforts and mutual written consent.",
+    counterLanguage:
+      "The parties agree to act in good faith and cooperate reasonably with respect to the obligations set forth in this Section, and neither party shall unreasonably withhold, condition, or delay its consent or approval.",
+  };
 }
 
 export default function ClauseList({ clauses }: ClauseListProps) {
   const [selectedCategory, setSelectedCategory] = useState<string>("ALL");
   const [selectedRisk, setSelectedRisk] = useState<string>("ALL");
   const [expandedClauseIds, setExpandedClauseIds] = useState<Set<string>>(new Set([clauses[0]?.id]));
+  const [copiedClauseId, setCopiedClauseId] = useState<string | null>(null);
+
+  const handleCopyCounterLanguage = (clauseId: string, text: string) => {
+    navigator.clipboard.writeText(text);
+    setCopiedClauseId(clauseId);
+    setTimeout(() => setCopiedClauseId(null), 2000);
+  };
 
   const toggleExpand = (id: string) => {
     setExpandedClauseIds((prev) => {
@@ -193,6 +246,53 @@ export default function ClauseList({ clauses }: ClauseListProps) {
                       </div>
                     </div>
                   )}
+
+                  {/* Negotiation Strategy & Counter-Language */}
+                  {(() => {
+                    const playbook = getNegotiationPlaybook(clause);
+                    return (
+                      <div className="p-4 rounded-xl bg-legal-50/70 dark:bg-legal-950/40 border border-legal-200 dark:border-legal-800 space-y-2.5">
+                        <div className="flex flex-wrap items-center justify-between gap-2">
+                          <div className="flex items-center gap-2">
+                            <span className="p-1 rounded-md bg-legal-600 text-white">
+                              <ShieldAlert className="w-3.5 h-3.5" />
+                            </span>
+                            <h6 className="text-xs font-bold text-legal-900 dark:text-legal-200 uppercase tracking-wider">
+                              Negotiation Playbook & Suggested Counter-Language:
+                            </h6>
+                          </div>
+
+                          <button
+                            type="button"
+                            onClick={() => handleCopyCounterLanguage(clause.id, playbook.counterLanguage)}
+                            className="inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-semibold rounded-lg bg-white dark:bg-slate-800 border border-legal-300 dark:border-legal-700 text-legal-700 dark:text-legal-300 hover:bg-legal-100 dark:hover:bg-slate-700 transition"
+                            title="Copy proposed counter-language to clipboard"
+                          >
+                            {copiedClauseId === clause.id ? (
+                              <>
+                                <Check className="w-3 h-3 text-emerald-500" />
+                                <span className="text-emerald-600 dark:text-emerald-400 font-bold">Copied!</span>
+                              </>
+                            ) : (
+                              <>
+                                <Copy className="w-3 h-3" />
+                                <span>Copy Counter-Proposal</span>
+                              </>
+                            )}
+                          </button>
+                        </div>
+
+                        <p className="text-xs text-slate-600 dark:text-slate-400">
+                          <strong className="text-slate-800 dark:text-slate-200">Recommended Strategy:</strong>{" "}
+                          {playbook.strategy}
+                        </p>
+
+                        <div className="p-3 bg-white dark:bg-slate-900 rounded-lg border border-legal-200 dark:border-legal-800/80 text-xs font-serif italic text-slate-800 dark:text-slate-200 leading-relaxed select-text">
+                          &ldquo;{playbook.counterLanguage}&rdquo;
+                        </div>
+                      </div>
+                    );
+                  })()}
 
                   {/* Raw Text Excerpt */}
                   <details className="text-xs">

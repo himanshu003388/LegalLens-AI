@@ -3,9 +3,10 @@
 import React, { useState } from "react";
 import ComparisonView from "@/components/ComparisonView";
 import { ComparisonAnalysis } from "@/lib/types/legal";
+import { useAnalysis } from "@/context/AnalysisContext";
 
 export default function ComparePage() {
-  const [comparisonResult, setComparisonResult] = useState<ComparisonAnalysis | null>(null);
+  const { comparisonResult, setComparisonResult } = useAnalysis();
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const handleRunComparison = async (

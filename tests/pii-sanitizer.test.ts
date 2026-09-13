@@ -28,6 +28,21 @@ describe("PII Sanitizer & Privacy Guard", () => {
     expect(result.redactedTypes.phoneNumbers).toBe(2);
   });
 
+  it("should redact bank routing/account numbers, tax IDs, passports, and addresses", () => {
+    const text = `
+      Wire funds to routing: 123456789 or account: 9876543210.
+      Company Tax ID: 12-3456789. Passport No: A1234567.
+      Premises located at 123 Main Street, Suite 400.
+    `;
+    const result = sanitizePII(text);
+
+    expect(result.sanitizedText).toContain("[REDACTED_BANK_");
+    expect(result.sanitizedText).toContain("[REDACTED_TAXID_1]");
+    expect(result.sanitizedText).toContain("[REDACTED_PASSPORT_1]");
+    expect(result.sanitizedText).toContain("[REDACTED_ADDRESS_1]");
+    expect(result.redactionCount).toBeGreaterThanOrEqual(4);
+  });
+
   it("should handle clean text without false positives", () => {
     const text = "Standard commercial terms for 12 months with Net 30 payments.";
     const result = sanitizePII(text);
@@ -36,3 +51,4 @@ describe("PII Sanitizer & Privacy Guard", () => {
     expect(result.redactionCount).toBe(0);
   });
 });
+

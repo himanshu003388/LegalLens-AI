@@ -19,6 +19,10 @@ LegalLens AI adheres strictly to an **ephemeral data retention model**:
 Prior to passing any text to GenAI services (Google Gemini, OpenAI, or Anthropic), LegalLens executes a deterministic PII sanitization pipeline:
 - **Social Security Numbers (SSNs)**: Detected via `/\b\d{3}[- ]?\d{2}[- ]?\d{4}\b/g` and replaced with `[REDACTED_SSN_X]`.
 - **Credit & Debit Cards**: Detected via `/\b(?:\d{4}[- ]?){3}\d{4}\b/g` and replaced with `[REDACTED_CARD_X]`.
+- **Bank Account & Routing Numbers**: Detected via routing/account patterns and replaced with `[REDACTED_BANK_X]`.
+- **Taxpayer IDs (EIN)**: Detected via `/\b\d{2}-\d{7}\b/g` and replaced with `[REDACTED_TAXID_X]`.
+- **Passport Numbers**: Detected via standard passport regex and replaced with `[REDACTED_PASSPORT_X]`.
+- **Physical Street Addresses**: Detected via postal street patterns and replaced with `[REDACTED_ADDRESS_X]`.
 - **Email Addresses**: Detected via standard RFC-5322 regex and replaced with `[REDACTED_EMAIL_X]`.
 - **Phone Numbers**: Detected via international & North American numbering plans and replaced with `[REDACTED_PHONE_X]`.
 
@@ -26,19 +30,23 @@ Users can verify or toggle PII redaction directly from the Document Uploader int
 
 ---
 
-## 3. Input Validation & Defense Against Prompt Injections
+## 3. Defense Against Prompt Injections & OWASP Top 10 for LLMs
 
 All incoming API requests undergo schema validation via **Zod**:
-- `/api/analyze`: Validated against `AnalyzeDocumentSchema`
-  - Max text payload capped at 500,000 characters (~100,000 words) to prevent buffer overflows or memory exhaustion.
-  - Strict string length enforcement on file names and supported MIME types.
-- `/api/chat`: Validated against `ChatRequestSchema`
-  - Enforces character bounds on user inquiries (2 to 2,000 characters).
-  - Sanitizes chat history objects.
-- `/api/compare`: Validated against `CompareDocumentsSchema`
-  - Validates baseline and revision texts independently.
+- `/api/analyze`: Validated against `AnalyzeDocumentSchema` (capped at 500,000 characters).
+- `/api/chat`: Validated against `ChatRequestSchema` (inquiries capped at 2,000 characters).
+- `/api/compare`: Validated against `CompareDocumentsSchema`.
 
-Prompt injection attempts within document bodies are rendered harmless because the system prompts isolate document excerpts inside clear structural delimiters (`[SECTION: ...]`) and enforce strict JSON output schemas.
+### OWASP Top 10 for LLM Applications Compliance Matrix
+
+| OWASP Vulnerability | Defensive Control Implemented in LegalLens AI |
+|---|---|
+| **LLM01: Prompt Injection** | Document text is strictly encapsulated between structural delimiters (`<<<START_USER_DOCUMENT_TEXT>>>` ... `<<<END_USER_DOCUMENT_TEXT>>>`). System instructions strictly designate enclosed text as untrusted passive data. |
+| **LLM02: Sensitive Data Disclosure** | Pre-LLM PII Sanitizer strips SSNs, credit cards, bank accounts, emails, and phone numbers before text is sent to LLMs. Zero data at rest. |
+| **LLM04: Model Denial of Service** | Strict Zod length bounds (500k char max), section chunking, and token bucket rate limiting (10 req/min upload, 30 req/min chat). |
+| **LLM06: Excessive Agency** | LegalLens AI is read-only. It executes zero external tool calls, database mutations, or automated legal filings. |
+| **LLM09: Overreliance** | Permanent high-contrast ethical disclaimer displayed across every screen and consultation brief, mandating attorney review. |
+
 
 ---
 

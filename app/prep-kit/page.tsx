@@ -3,9 +3,11 @@
 import React, { useState } from "react";
 import LawyerPrepKit from "@/components/LawyerPrepKit";
 import { LawyerPrepKitData } from "@/lib/types/legal";
-import { Briefcase, Sparkles } from "lucide-react";
+import { useAnalysis } from "@/context/AnalysisContext";
 
 export default function PrepKitPage() {
+  const { analysis } = useAnalysis();
+
   const defaultPrepKit: LawyerPrepKitData = {
     documentTitle: "Commercial Services Agreement / Residential Lease",
     consultationObjective:
@@ -50,14 +52,16 @@ export default function PrepKitPage() {
       "This preparation kit is an automated AI-assisted briefing summary generated to help you ask informed questions. It is for your reference ahead of speaking with a licensed attorney and does not constitute legal representation.",
   };
 
-  const [prepKitData] = useState<LawyerPrepKitData>(defaultPrepKit);
+  const activeData = analysis?.lawyerPrepKit || defaultPrepKit;
+  const activeTitle = analysis?.fileName || "Standard Commercial Agreement";
 
   return (
     <div className="space-y-6">
       <LawyerPrepKit
-        data={prepKitData}
-        documentTitle="Standard Commercial Agreement"
+        data={activeData}
+        documentTitle={activeTitle}
       />
     </div>
   );
 }
+

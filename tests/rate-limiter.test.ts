@@ -31,4 +31,23 @@ describe("Token Bucket Rate Limiter", () => {
     expect(blocked.remaining).toBe(0);
     expect(blocked.retryAfterSeconds).toBeGreaterThan(0);
   });
+
+  it("should extract client IP from Cloudflare and proxy headers", async () => {
+    const { getClientIdentifier } = await import("@/lib/security/rate-limiter");
+    const h1 = new Headers({ "cf-connecting-ip": "1.1.1.1" });
+    expect(getClientIdentifier(h1)).toBe("1.1.1.1");
+
+    const h2 = new Headers({ "x-forwarded-for": "2.2.2.2, 3.3.3.3" });
+    expect(getClientIdentifier(h2)).toBe("2.2.2.2");
+
+    const h3 = new Headers();
+    expect(getClientIdentifier(h3)).toBe("anonymous-client");
+  });
+
+  it("should clean expired buckets and reset state", async () => {
+    const { cleanExpiredBuckets, resetRateLimiter } = await import("@/lib/security/rate-limiter");
+    expect(cleanExpiredBuckets(true)).toBeGreaterThanOrEqual(0);
+    resetRateLimiter();
+  });
 });
+

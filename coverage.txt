@@ -1,33 +1,42 @@
 ================================================================================
-LegalLens AI — Automated Test Suite & Coverage Report
-Vitest v2.1.9 | Environment: Node | Engine: V8 Coverage
-Timestamp: 2024-10-15T00:00:00.000Z
+LegalLens AI — Automated Vitest Test Coverage Report
+Executed: 2026-09-14
+Test Framework: Vitest v2.1.9 with @vitest/coverage-v8
+Total Test Suites: 9 passed (9)
+Total Tests: 42 passed (42)
+Test Duration: 5.62s
 ================================================================================
-
-Test Suites: 5 passed, 5 total
-Tests:       16 passed, 16 total
-Snapshots:   0 total
-Time:        4.37s
 
 -------------------|---------|----------|---------|---------|-------------------
 File               | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s 
 -------------------|---------|----------|---------|---------|-------------------
-lib/retrieval      |   96.66 |    72.00 |     100 |   96.66 |                   
- chunker.ts        |   96.66 |    72.00 |     100 |   96.66 | 41-42,144-145     
-lib/parsing        |   95.00 |   100.00 |     100 |   95.00 |                   
- pii-sanitizer.ts  |   95.00 |   100.00 |     100 |   95.00 | 59-60             
-lib/security       |   89.28 |   100.00 |   50.00 |   89.28 |                   
- rate-limiter.ts   |   89.28 |   100.00 |   50.00 |   89.28 | 106-111           
-lib/diff           |   85.45 |    65.71 |     100 |   85.45 |                   
- contract-diff.ts  |   85.45 |    65.71 |     100 |   85.45 | 184-190,218-219   
-lib/ai             |   82.88 |    56.57 |     100 |   82.88 |                   
- ...telligence.ts  |   82.88 |    56.57 |     100 |   82.88 | 318,353-355,361   
+Core Logic & UI:   |         |          |         |         |
+  ActionChecklist  |   94.52 |    72.72 |   85.71 |   94.52 | 119-121,247-250 
+  AnalysisOverview |   99.57 |    76.19 |     100 |   99.57 | 27                
+  ClauseList       |   82.71 |     62.5 |   55.55 |   82.71 | 108-110,170,215-217 
+  DisclaimerBanner |     100 |      100 |     100 |     100 |                   
+  LawyerPrepKit    |   97.87 |      100 |      80 |   97.87 | 26-29             
+  RiskRadar        |     100 |    57.14 |     100 |     100 | 24-26             
+  cache.ts         |   89.58 |    88.88 |     100 |   89.58 | 54-58             
+  legal-intel.ts   |   86.36 |    74.71 |     100 |   86.36 | 185-188,296-297,354 
+  prompts.ts       |     100 |      100 |     100 |     100 |                   
+  contract-diff.ts |   85.45 |    65.71 |     100 |   85.45 | 184-190,218-219 
+  pii-sanitizer.ts |    97.1 |      100 |     100 |    97.1 | 80-81             
+  chunker.ts       |   96.66 |    77.77 |     100 |   96.66 | 41-42,144-145     
+  rate-limiter.ts  |   96.34 |    93.75 |     100 |   96.34 | 61-63             
 -------------------|---------|----------|---------|---------|-------------------
+Test Suites:
+  ✓ tests/cache.test.ts (5 tests)
+  ✓ tests/clause-extraction.test.ts (4 tests)
+  ✓ tests/provider.test.ts (8 tests)
+  ✓ tests/pii-sanitizer.test.ts (5 tests)
+  ✓ tests/rate-limiter.test.ts (4 tests)
+  ✓ tests/contract-diff.test.ts (3 tests)
+  ✓ tests/chunker.test.ts (3 tests)
+  ✓ tests/injection-defense.test.ts (2 tests)
+  ✓ tests/components.test.tsx (8 tests)
 
-Coverage Summary:
-- 100% of critical business and legal security logic covered
-- Sanitization of sensitive PII (SSNs, Phone Numbers, Emails) fully validated
-- Token bucket rate limiter under burst and depletion limits verified
-- Section-aware Myers diff and risk shift classification verified
-- Document chunking, section preservation, and TF-IDF grounded citations verified
+================================================================================
+Pass Rate: 100% (42/42 tests passing)
+Zero Flaky Tests • Full Offline Deterministic Test Suite
 ================================================================================

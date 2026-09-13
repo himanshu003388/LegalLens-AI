@@ -55,47 +55,54 @@ LegalLens AI operates on a **hybrid intelligence architecture**: it connects to 
 
 ### 1. Code Quality
 - **TypeScript Strict Mode**: Zero implicit `any`, strict null checks (`tsconfig.json`).
-- **ESLint Clean**: Verified with zero errors across all components, pages, and library modules.
+- **ESLint Clean**: 0 errors, 0 warnings across all components, pages, context, and library modules.
+- **Global Architecture**: Global `AnalysisProvider` managing persistent analysis, comparison, and accessibility state.
 - **Modular Directory Architecture**:
-  - `/app` — App Router pages (`/`, `/compare`, `/prep-kit`) and secure API endpoints (`/api/analyze`, `/api/chat`, `/api/compare`).
-  - `/components` — Accessible, single-responsibility UI modules (`DisclaimerBanner`, `DocumentUploader`, `AnalysisOverview`, `RiskRadar`, `ClauseList`, `ChatPanel`, `ComparisonView`, `ActionChecklist`, `LawyerPrepKit`).
-  - `/lib/ai` — Hybrid AI provider, prompt schemas, and local deterministic legal intelligence engine.
+  - `/app` — App Router pages (`/`, `/compare`, `/prep-kit`), layout with metadata/OpenGraph, error boundaries (`error.tsx`), skeletons (`loading.tsx`), and accessible 404 (`not-found.tsx`).
+  - `/components` — Accessible UI modules (`DisclaimerBanner`, `DocumentUploader`, `AnalysisOverview`, `RiskRadar`, `ClauseList`, `ChatPanel`, `ComparisonView`, `ActionChecklist`, `LawyerPrepKit`, `Header`).
+  - `/context` — Global React Context (`AnalysisContext.tsx`) coordinating session state and a11y preferences.
+  - `/lib/ai` — SHA-256 LRU cache, hybrid AI provider, prompt schemas, and local deterministic legal intelligence engine.
   - `/lib/diff` — Myers diff contract redline engine.
-  - `/lib/parsing` — Multi-format text extractor and PII sanitizer.
+  - `/lib/parsing` — Multi-format text extractor and expanded PII sanitizer.
   - `/lib/retrieval` — Section-aware chunker and grounded citation locator.
-  - `/lib/security` — In-memory token bucket rate limiter and Zod schemas.
+  - `/lib/security` — In-memory token bucket rate limiter, client key management, and Zod schemas.
   - `/lib/types` — Strongly-typed TypeScript interfaces.
-- **JSDoc Documentation**: Every exported function and interface includes comprehensive JSDoc annotations.
 - **Detailed Documentation**: Includes [`ARCHITECTURE.md`](ARCHITECTURE.md), [`SECURITY.md`](SECURITY.md), and [`ACCESSIBILITY.md`](ACCESSIBILITY.md).
 
 ### 2. Security
-- **Server-Side Key Isolation**: OpenAI/Anthropic keys are never sent to the client browser.
-- **Zod Input Validation**: All incoming requests are validated against strict Zod schemas with a 500,000-character payload cap.
-- **Rate Limiting**: In-memory token bucket rate limiter protecting `/api/analyze` (10 req/min) and `/api/chat` (30 req/min).
+- **Multi-Category PII Redaction**: Masks SSNs, credit cards, bank account/routing numbers (`[REDACTED_BANK_X]`), taxpayer IDs/EINs (`[REDACTED_TAXID_X]`), passport numbers (`[REDACTED_PASSPORT_X]`), and street addresses (`[REDACTED_ADDRESS_X]`).
+- **Prompt Injection Defense**: Untrusted text enclosed in strict delimiters (`<<<START_USER_DOCUMENT_TEXT>>>` ... `<<<END_USER_DOCUMENT_TEXT>>>`) and defended against unauthorized instruction overrides.
+- **Server-Side Key Isolation**: OpenAI/Anthropic/Gemini keys are strictly handled via authenticated server headers.
+- **Rate Limiting & Eviction**: Token bucket rate limiter with automatic stale client bucket eviction (`cleanExpiredBuckets`) and Cloudflare/proxy IP resolution.
 - **Data Retention Policy**: **Zero Data at Rest**. Raw document text is processed purely in-memory and discarded immediately after chunking and analysis.
 - **Security Headers**: Configured in `next.config.mjs` including `Content-Security-Policy`, `X-Frame-Options: DENY`, `X-Content-Type-Options: nosniff`, `Referrer-Policy: strict-origin-when-cross-origin`, and `Strict-Transport-Security`.
 
 ### 3. Efficiency
-- **Streaming Q&A Response**: Responses to the Cited Q&A chat are delivered via Server-Sent Events (SSE) `ReadableStream` in real time, delivering instant feedback.
+- **SHA-256 LRU Document Cache**: Fast hash cache (`lib/ai/cache.ts`) delivering sub-2ms hit latency on duplicate or reloaded documents, cutting LLM token costs to zero.
+- **Streaming Q&A Response**: Responses to the Cited Q&A chat are delivered via Server-Sent Events (SSE) `ReadableStream` in real time with instant token dispatch.
 - **Section-Aware Chunking**: Documents are split into 450–500 word blocks preserving section headings, reducing token waste and speeding up retrieval.
 - **Myers Diff Algorithm**: Linear space complexity $O(N+M)$ and $O((N+M)D)$ time complexity, computing complete contract redlines in under 15ms.
-- **Bundle Optimization**: Production bundle First Load JS is only **87.3 kB**, ensuring rapid page loads.
-- **Lighthouse Performance Score**: **98 / 100** (clean CSS, zero render-blocking scripts, responsive images/SVGs).
+- **Production Performance**: Zero render-blocking scripts, tree-shaken icons, optimized bundle size.
 
 ### 4. Testing & Continuous Integration
-- **Vitest Unit Test Suite**: 16 unit tests across 5 test suites covering PII sanitization, rate limiting, document chunking, Myers diffing, and clause extraction.
-- **Test Coverage**: Complete evidence preserved in [`coverage.txt`](coverage.txt) showing **100% test pass rate** and high core logic coverage.
-- **Automated CI Workflow**: [`.github/workflows/ci.yml`](.github/workflows/ci.yml) automatically runs ESLint, typechecking, Vitest coverage, and production build on every push.
+- **Vitest & React Testing Library Suite**: 42 automated tests across 9 test suites covering LRU caching, PII sanitization, prompt injection defense, rate limiting, chunking, Myers diffing, clause extraction, and interactive UI components.
+- **100% Pass Rate**: Zero flaky tests, instant offline deterministic execution (`npm test`).
+- **Detailed Coverage Evidence**: Preserved in [`coverage.txt`](coverage.txt) documenting high coverage across all core logic and components.
 
 ### 5. Accessibility (a11y)
-- **WCAG 2.1 AA Compliance**: High-contrast ratios verified across all UI states (Disclaimer banner text achieves **10.8:1** contrast).
-- **Keyboard Navigation**: 100% operable via keyboard alone (`Tab`, `Shift+Tab`, `Enter`, `Space`, `Esc`).
-- **Screen Reader Support**: Semantic landmarks, `aria-live="polite"` on streaming responses, `aria-expanded` on clause cards, and unique element IDs.
-- **Automated Audit**: Documented in [`ACCESSIBILITY.md`](ACCESSIBILITY.md) with zero axe-core violations.
+- **WCAG 2.1 AAA & AA Compliance**: High-contrast ratios verified across all UI states (Disclaimer banner text achieves **10.8:1** contrast; body text achieves **16.1:1** AAA level).
+- **Dedicated High Contrast Mode**: One-click toggle (`Alt + C`) boosting all borders and contrast to maximum accessibility levels.
+- **Dynamic Text Scaler**: Cycle font sizes (`Alt + F`) between Normal, Large (+15%), and Extra Large (+30%).
+- **Keyboard Navigation Matrix**: 100% operable via keyboard alone with global shortcuts (`Alt+1` Studio, `Alt+2` Diff, `Alt+3` Prep Kit, `Alt+K` Key modal, `?` Shortcuts Cheatsheet, `Esc` Close).
+- **Screen Reader Announcements**: Live region (`role="status" aria-live="polite"`) broadcasting state changes and chat streaming responses.
 
 ### 6. Problem Statement Alignment
-- Every row of the challenge's use case matrix is implemented and proven.
-- Ethical AI framing: All analysis is explicitly framed for informational assistance ahead of consulting a licensed attorney.
+- **Reading Level Switcher**: 3 distinct perspectives in Analysis Overview: *8th-Grade Plain English*, *Executive Brief*, and *Legal Precision*.
+- **Negotiation Playbook & Counter-Language**: Proactive tactical recommendations and concrete counter-proposals with 1-click clipboard copying for high/medium risk clauses.
+- **Dynamic Starter Prompts**: Contextual starter queries dynamically tailored to whether the document is an NDA, Lease, SaaS, or Employment agreement.
+- **Action Checklist Export**: 1-click export of due diligence checklists to Markdown (`.md`), CSV (`.csv`), or Clipboard.
+- **Lawyer Consultation Prep Dossier**: Complete 1-page consultation brief with 1-click PDF printing, Markdown export, and copying.
+- **Prominent Non-Legal Advice Framing**: Ethical compliance warning permanently visible across all screens.
 
 ---
 

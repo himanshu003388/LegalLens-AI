@@ -1,8 +1,8 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import {
   Scale,
   FileText,
@@ -15,6 +15,9 @@ import {
   CheckCircle2,
   AlertCircle,
   Trash2,
+  Sun,
+  Type,
+  Keyboard,
 } from "lucide-react";
 import {
   getStoredApiKey,
@@ -23,6 +26,7 @@ import {
   clearStoredApiKey,
   SupportedProvider,
 } from "@/lib/security/client-keys";
+import { useAnalysis } from "@/context/AnalysisContext";
 
 interface HeaderProps {
   activeTab?: string;
@@ -31,7 +35,17 @@ interface HeaderProps {
 
 export default function Header({ activeTab, onTabChange }: HeaderProps) {
   const pathname = usePathname();
+  const router = useRouter();
+  const {
+    highContrastMode,
+    setHighContrastMode,
+    fontSizeScale,
+    setFontSizeScale,
+  } = useAnalysis();
+
   const [showKeyModal, setShowKeyModal] = useState(false);
+  const [showShortcutsModal, setShowShortcutsModal] = useState(false);
+  const [liveAnnouncement, setLiveAnnouncement] = useState("");
   const [customKey, setCustomKey] = useState("");
   const [selectedProvider, setSelectedProvider] = useState<SupportedProvider>("gemini");
   const [saveStatus, setSaveStatus] = useState("");
@@ -43,6 +57,23 @@ export default function Header({ activeTab, onTabChange }: HeaderProps) {
 
   const isCompare = pathname === "/compare";
   const isPrepKit = pathname === "/prep-kit";
+
+  const toggleContrast = useCallback(() => {
+    const next = !highContrastMode;
+    setHighContrastMode(next);
+    setLiveAnnouncement(next ? "High contrast mode enabled" : "High contrast mode disabled");
+  }, [highContrastMode, setHighContrastMode]);
+
+  const cycleFontSize = useCallback(() => {
+    const nextScale =
+      fontSizeScale === "normal"
+        ? "large"
+        : fontSizeScale === "large"
+        ? "xlarge"
+        : "normal";
+    setFontSizeScale(nextScale);
+    setLiveAnnouncement(`Text scale set to ${nextScale}`);
+  }, [fontSizeScale, setFontSizeScale]);
 
   // Synchronize on mount and storage events
   const updateEngineLabel = () => {
@@ -87,6 +118,55 @@ export default function Header({ activeTab, onTabChange }: HeaderProps) {
       window.removeEventListener("open-key-modal", handleOpenModal);
     };
   }, []);
+
+  // Global Keyboard Navigation & Accessibility Shortcuts
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      const target = e.target as HTMLElement | null;
+      const isInput =
+        target &&
+        (target.tagName === "INPUT" ||
+          target.tagName === "TEXTAREA" ||
+          target.isContentEditable);
+
+      if (e.key === "Escape") {
+        setShowKeyModal(false);
+        setShowShortcutsModal(false);
+        return;
+      }
+
+      if (!isInput && (e.key === "?" || (e.shiftKey && e.key === "/"))) {
+        e.preventDefault();
+        setShowShortcutsModal((prev) => !prev);
+        return;
+      }
+
+      if (e.altKey) {
+        if (e.key === "1") {
+          e.preventDefault();
+          router.push("/");
+        } else if (e.key === "2") {
+          e.preventDefault();
+          router.push("/compare");
+        } else if (e.key === "3") {
+          e.preventDefault();
+          router.push("/prep-kit");
+        } else if (e.key.toLowerCase() === "k") {
+          e.preventDefault();
+          setShowKeyModal((prev) => !prev);
+        } else if (e.key.toLowerCase() === "c") {
+          e.preventDefault();
+          toggleContrast();
+        } else if (e.key.toLowerCase() === "f") {
+          e.preventDefault();
+          cycleFontSize();
+        }
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [toggleContrast, cycleFontSize, router]);
 
   // Auto-detect provider when user types or pastes key
   const handleKeyChange = (val: string) => {
@@ -270,6 +350,44 @@ export default function Header({ activeTab, onTabChange }: HeaderProps) {
                 <strong className="font-semibold">{activeEngineLabel}</strong>
               </button>
 
+              {/* High Contrast Mode Toggle */}
+              <button
+                type="button"
+                onClick={toggleContrast}
+                className={`p-2 rounded-lg transition focus:outline-none focus:ring-2 focus:ring-amber-400 ${
+                  highContrastMode
+                    ? "bg-amber-400 text-slate-950 font-bold shadow-md ring-2 ring-white"
+                    : "text-slate-300 hover:text-white hover:bg-slate-800"
+                }`}
+                aria-label={highContrastMode ? "Disable high contrast mode" : "Enable high contrast mode (Alt+C)"}
+                title={highContrastMode ? "High Contrast: ON (Alt+C)" : "High Contrast: OFF (Alt+C)"}
+              >
+                <Sun className="w-4 h-4" aria-hidden="true" />
+              </button>
+
+              {/* Font Size Scale Button */}
+              <button
+                type="button"
+                onClick={cycleFontSize}
+                className="px-2.5 py-1 text-xs font-semibold rounded-lg text-slate-300 hover:text-white hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-amber-400 border border-slate-700 transition flex items-center gap-1"
+                aria-label={`Adjust font size. Current: ${fontSizeScale}. Click to cycle (Alt+F)`}
+                title={`Font Size: ${fontSizeScale.toUpperCase()} (Alt+F)`}
+              >
+                <Type className="w-3.5 h-3.5 text-legal-400" aria-hidden="true" />
+                <span>{fontSizeScale === "normal" ? "A" : fontSizeScale === "large" ? "A+" : "A++"}</span>
+              </button>
+
+              {/* Keyboard Shortcuts Cheatsheet Button */}
+              <button
+                type="button"
+                onClick={() => setShowShortcutsModal(true)}
+                className="p-2 text-slate-300 hover:text-white hover:bg-slate-800 rounded-lg focus:outline-none focus:ring-2 focus:ring-legal-400 transition"
+                aria-label="Accessibility & Keyboard Shortcuts Cheatsheet (Press ?)"
+                title="Keyboard Shortcuts (?)"
+              >
+                <Keyboard className="w-4 h-4" aria-hidden="true" />
+              </button>
+
               {/* Key Settings Button */}
               <button
                 type="button"
@@ -282,6 +400,11 @@ export default function Header({ activeTab, onTabChange }: HeaderProps) {
               </button>
             </div>
           </div>
+        </div>
+
+        {/* Screen Reader Live Status Announcer */}
+        <div className="sr-only" role="status" aria-live="polite" aria-atomic="true">
+          {liveAnnouncement}
         </div>
       </header>
 
@@ -482,6 +605,89 @@ export default function Header({ activeTab, onTabChange }: HeaderProps) {
                 </div>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* Modal for Keyboard Shortcuts & Accessibility Cheatsheet */}
+      {showShortcutsModal && (
+        <div
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="shortcuts-title"
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-fade-in"
+          onClick={() => setShowShortcutsModal(false)}
+        >
+          <div
+            className="bg-slate-900 border border-slate-700 text-slate-100 rounded-2xl max-w-lg w-full p-6 sm:p-7 shadow-2xl space-y-5"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+              <div className="flex items-center gap-2.5">
+                <div className="p-2 rounded-xl bg-amber-500/20 text-amber-300 border border-amber-500/30">
+                  <Keyboard className="w-5 h-5" />
+                </div>
+                <div>
+                  <h3 id="shortcuts-title" className="text-base font-bold font-serif text-white">
+                    Accessibility & Keyboard Shortcuts
+                  </h3>
+                  <p className="text-xs text-slate-400">Quick navigation & compliance controls</p>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setShowShortcutsModal(false)}
+                className="text-slate-400 hover:text-white text-sm px-2 py-1 rounded-lg hover:bg-slate-800"
+                aria-label="Close shortcuts dialog"
+              >
+                ✕
+              </button>
+            </div>
+
+            <div className="grid grid-cols-1 gap-2 text-xs">
+              <div className="flex items-center justify-between p-2.5 rounded-lg bg-slate-800/60 border border-slate-700/60">
+                <span className="text-slate-300">Document Studio (Analysis)</span>
+                <kbd className="px-2 py-0.5 rounded bg-slate-700 font-mono text-[11px] text-amber-300 border border-slate-600">Alt + 1</kbd>
+              </div>
+              <div className="flex items-center justify-between p-2.5 rounded-lg bg-slate-800/60 border border-slate-700/60">
+                <span className="text-slate-300">Compare Contracts (Diff)</span>
+                <kbd className="px-2 py-0.5 rounded bg-slate-700 font-mono text-[11px] text-amber-300 border border-slate-600">Alt + 2</kbd>
+              </div>
+              <div className="flex items-center justify-between p-2.5 rounded-lg bg-slate-800/60 border border-slate-700/60">
+                <span className="text-slate-300">Lawyer Consultation Prep Kit</span>
+                <kbd className="px-2 py-0.5 rounded bg-slate-700 font-mono text-[11px] text-amber-300 border border-slate-600">Alt + 3</kbd>
+              </div>
+              <div className="flex items-center justify-between p-2.5 rounded-lg bg-slate-800/60 border border-slate-700/60">
+                <span className="text-slate-300">Configure AI Engine / API Key</span>
+                <kbd className="px-2 py-0.5 rounded bg-slate-700 font-mono text-[11px] text-amber-300 border border-slate-600">Alt + K</kbd>
+              </div>
+              <div className="flex items-center justify-between p-2.5 rounded-lg bg-slate-800/60 border border-slate-700/60">
+                <span className="text-slate-300">Toggle High Contrast Mode (WCAG AAA)</span>
+                <kbd className="px-2 py-0.5 rounded bg-slate-700 font-mono text-[11px] text-amber-300 border border-slate-600">Alt + C</kbd>
+              </div>
+              <div className="flex items-center justify-between p-2.5 rounded-lg bg-slate-800/60 border border-slate-700/60">
+                <span className="text-slate-300">Cycle Font Size Scale (A / A+ / A++)</span>
+                <kbd className="px-2 py-0.5 rounded bg-slate-700 font-mono text-[11px] text-amber-300 border border-slate-600">Alt + F</kbd>
+              </div>
+              <div className="flex items-center justify-between p-2.5 rounded-lg bg-slate-800/60 border border-slate-700/60">
+                <span className="text-slate-300">Show Keyboard Shortcuts Cheatsheet</span>
+                <kbd className="px-2 py-0.5 rounded bg-slate-700 font-mono text-[11px] text-amber-300 border border-slate-600">?</kbd>
+              </div>
+              <div className="flex items-center justify-between p-2.5 rounded-lg bg-slate-800/60 border border-slate-700/60">
+                <span className="text-slate-300">Close Open Dialog / Modal</span>
+                <kbd className="px-2 py-0.5 rounded bg-slate-700 font-mono text-[11px] text-amber-300 border border-slate-600">Esc</kbd>
+              </div>
+            </div>
+
+            <div className="pt-2 flex justify-end">
+              <button
+                type="button"
+                onClick={() => setShowShortcutsModal(false)}
+                className="px-4 py-2 bg-legal-600 hover:bg-legal-500 text-white rounded-xl text-xs font-semibold transition"
+              >
+                Close (Esc)
+              </button>
+            </div>
           </div>
         </div>
       )}

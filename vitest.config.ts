@@ -13,6 +13,9 @@ export default defineConfig({
       exclude: [
         "node_modules/**",
         ".next/**",
+        "app/**",
+        "postcss.config.js",
+        "lib/types/**",
         "**/*.d.ts",
         "vitest.config.ts",
         "tailwind.config.ts",

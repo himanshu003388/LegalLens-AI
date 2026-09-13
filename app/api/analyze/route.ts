@@ -10,6 +10,7 @@ import { AnalyzeDocumentSchema } from "@/lib/security/schemas";
 import { checkRateLimit, getClientIdentifier, UPLOAD_LIMIT_CONFIG } from "@/lib/security/rate-limiter";
 import { sanitizePII } from "@/lib/parsing/pii-sanitizer";
 import { analyzeLegalDocument } from "@/lib/ai/provider";
+import { computeDocumentHash, getCachedAnalysis, setCachedAnalysis } from "@/lib/ai/cache";
 
 export const runtime = "nodejs";
 
@@ -73,18 +74,45 @@ export async function POST(req: NextRequest) {
       redactionStats = sanitized.redactedTypes;
     }
 
-    // 4. Document intelligence analysis
+    // 4. Cache check (SHA-256 fingerprint)
+    const effectiveProvider = userApiKey ? (userProvider || "cloud") : "local";
+    const cacheKey = computeDocumentHash(processedText, effectiveProvider);
+    const cachedAnalysis = getCachedAnalysis(cacheKey);
+
+    if (cachedAnalysis) {
+      return NextResponse.json(
+        {
+          success: true,
+          analysis: cachedAnalysis,
+          redactionStats,
+          cached: true,
+        },
+        {
+          headers: {
+            "X-RateLimit-Remaining": rateLimit.remaining.toString(),
+            "X-Cache-Status": "HIT",
+          },
+        }
+      );
+    }
+
+    // 5. Document intelligence analysis (Cache miss)
     const analysis = await analyzeLegalDocument(fileName, processedText, userApiKey, userProvider);
+
+    // Save to LRU cache
+    setCachedAnalysis(cacheKey, analysis);
 
     return NextResponse.json(
       {
         success: true,
         analysis,
         redactionStats,
+        cached: false,
       },
       {
         headers: {
           "X-RateLimit-Remaining": rateLimit.remaining.toString(),
+          "X-Cache-Status": "MISS",
         },
       }
     );
