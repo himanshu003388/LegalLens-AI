@@ -1,0 +1,21 @@
+MASTER SAAS SERVICES AGREEMENT (VERSION 1.0)
+
+This Master Services Agreement ("Agreement") is dated January 15, 2024, between CloudPulse Inc. ("Provider") and Vertex Enterprise Corp ("Customer").
+
+1. SERVICES AND LICENSE
+Provider grants Customer a non-exclusive, non-transferable subscription right to access and use the CloudPulse Enterprise Analytics platform for internal business purposes during the Term.
+
+2. FEES AND PAYMENT TERMS
+Customer shall pay all subscription fees specified in applicable Order Forms. Invoices are payable within thirty (30) days of invoice receipt (Net 30). Late balances shall accrue interest at 1.0% per month or the legal maximum, whichever is less.
+
+3. TERM AND TERMINATION
+The initial term of this Agreement shall be one (1) year. Either party may terminate this Agreement for cause upon thirty (30) days' prior written notice if the other party materially breaches this Agreement and fails to cure such breach within the thirty (30) day cure period.
+
+4. LIMITATION OF LIABILITY
+TO THE MAXIMUM EXTENT PERMITTED BY LAW, IN NO EVENT SHALL EITHER PARTY'S AGGREGATE LIABILITY ARISING OUT OF OR RELATED TO THIS AGREEMENT EXCEED THE TOTAL AMOUNT ACTUALLY PAID BY CUSTOMER IN THE TWELVE (12) MONTHS PRECEDING THE INCIDENT GIVING RISE TO LIABILITY. NEITHER PARTY SHALL BE LIABLE FOR ANY INDIRECT, INCIDENTAL, OR CONSEQUENTIAL DAMAGES.
+
+5. INDEMNIFICATION
+Provider shall defend and indemnify Customer against third-party claims alleging that Customer's authorized use of the Services infringes any valid patent, copyright, or trademark of a third party, subject to Customer providing prompt written notice.
+
+6. GOVERNING LAW
+This Agreement shall be governed by and construed under the laws of the State of New York.

@@ -1,0 +1,38 @@
+MUTUAL NON-DISCLOSURE AGREEMENT
+
+This Mutual Non-Disclosure Agreement ("Agreement") is entered into as of October 1, 2024 ("Effective Date"), by and between Acme Technologies Inc., a Delaware corporation ("Party A"), and Nova Innovations LLC, a California limited liability company ("Party B").
+
+1. PURPOSE
+The parties wish to explore a potential business relationship concerning collaborative software development and proprietary AI tooling (the "Purpose"). In connection with the Purpose, each party may disclose certain confidential technical and business information to the other party.
+
+2. CONFIDENTIAL INFORMATION
+"Confidential Information" means any proprietary information, technical data, trade secrets, know-how, software code, product roadmaps, customer lists, or financial data disclosed by one party ("Disclosing Party") to the other party ("Receiving Party"), whether orally or in writing, that is designated as confidential or that reasonably should be understood to be confidential given the nature of the information.
+
+3. OBLIGATIONS OF RECEIVING PARTY
+The Receiving Party agrees:
+(a) To hold the Disclosing Party's Confidential Information in strict confidence;
+(b) To protect such Confidential Information with the same degree of care it uses for its own proprietary information of like nature, but in no event less than reasonable care;
+(c) Not to disclose Confidential Information to any third party without prior written consent;
+(d) To limit access to Confidential Information to those employees, contractors, and legal advisors who need access for the Purpose and who are bound by confidentiality obligations at least as restrictive as those herein.
+
+4. EXCLUSIONS FROM CONFIDENTIALITY
+Confidential Information does not include information that:
+(a) Is or becomes publicly known through no breach of this Agreement;
+(b) Was already in the rightful possession of the Receiving Party prior to disclosure;
+(c) Is independently developed by the Receiving Party without reference to or reliance upon the Disclosing Party's Confidential Information;
+(d) Is rightfully received from a third party without duty of confidentiality.
+
+5. TERM AND TERMINATION
+This Agreement and the parties' discussions may be terminated by either party upon thirty (30) days' prior written notice. The confidentiality obligations under this Agreement shall survive for a period of five (5) years from the date of disclosure; provided, however, that trade secrets shall remain confidential in perpetuity.
+
+6. RETURN OF MATERIALS
+Upon termination of this Agreement or upon written request, the Receiving Party shall promptly return or certify the destruction of all tangible copies of Confidential Information, retaining only one copy in legal archives solely for compliance purposes.
+
+7. INDEMNIFICATION AND REMEDIES
+The Receiving Party acknowledges that unauthorized disclosure of Confidential Information may cause irreparable harm for which monetary damages alone would be inadequate. Accordingly, the Disclosing Party shall be entitled to seek injunctive relief in addition to any other legal remedies available. Each party agrees to indemnify and hold harmless the other party from third-party claims arising from a material breach of this section.
+
+8. GOVERNING LAW AND JURISDICTION
+This Agreement shall be governed by and construed in accordance with the laws of the State of Delaware, without regard to conflict of law principles. Any dispute arising out of or in connection with this Agreement shall be submitted to the exclusive jurisdiction of the state and federal courts located in Wilmington, Delaware.
+
+9. MISCELLANEOUS
+This Agreement represents the entire understanding between the parties with respect to the subject matter hereof. No amendment or waiver shall be binding unless in writing and signed by authorized representatives of both parties.

@@ -1,0 +1,164 @@
+"use client";
+
+import React from "react";
+import { LawyerPrepKitData } from "@/lib/types/legal";
+import { Printer, Briefcase, HelpCircle, AlertCircle, FileCheck2, ShieldAlert } from "lucide-react";
+
+interface LawyerPrepKitProps {
+  data: LawyerPrepKitData;
+  documentTitle: string;
+}
+
+export default function LawyerPrepKit({ data, documentTitle }: LawyerPrepKitProps) {
+  const handlePrint = () => {
+    if (typeof window !== "undefined") {
+      window.print();
+    }
+  };
+
+  return (
+    <div className="space-y-6">
+      {/* Top action bar */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 shadow-sm print:hidden">
+        <div className="flex items-center gap-2.5">
+          <div className="p-2 rounded-xl bg-amber-50 dark:bg-amber-950 text-amber-600 dark:text-amber-400">
+            <Briefcase className="w-5 h-5" />
+          </div>
+          <div>
+            <h2 className="text-xl font-bold text-slate-900 dark:text-slate-100 font-serif">
+              Attorney Consultation Brief & Prep Dossier
+            </h2>
+            <p className="text-xs text-slate-500 dark:text-slate-400">
+              Structured 1-page overview designed to optimize your time with legal counsel
+            </p>
+          </div>
+        </div>
+
+        <button
+          type="button"
+          onClick={handlePrint}
+          className="flex items-center gap-2 px-4 py-2.5 bg-legal-600 hover:bg-legal-500 text-white rounded-xl text-xs sm:text-sm font-semibold transition shadow-sm"
+        >
+          <Printer className="w-4 h-4" />
+          <span>Export / Print Dossier (PDF)</span>
+        </button>
+      </div>
+
+      {/* The Printable Dossier Container */}
+      <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-8 sm:p-12 shadow-sm space-y-8 print:border-none print:shadow-none print:p-0">
+        {/* Header with Title & Watermark */}
+        <div className="border-b border-slate-200 dark:border-slate-800 pb-6">
+          <div className="flex items-center justify-between gap-4 mb-2">
+            <span className="text-xs font-bold uppercase tracking-wider text-legal-700 dark:text-legal-400">
+              LegalLens AI — Legal Consultation Brief
+            </span>
+            <span className="text-xs text-slate-400 font-mono">
+              Date: {new Date().toLocaleDateString()}
+            </span>
+          </div>
+
+          <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-slate-100 font-serif mb-2">
+            Consultation Prep Dossier: {documentTitle}
+          </h1>
+
+          {/* Prominent Framing Banner */}
+          <div className="p-3.5 bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-900/60 rounded-xl text-xs text-amber-900 dark:text-amber-200 font-medium">
+            <strong className="font-semibold">Notice to User & Legal Counsel:</strong> This briefing sheet was synthesized by LegalLens AI for your reference ahead of speaking with a licensed attorney. It does not replace professional legal representation.
+          </div>
+        </div>
+
+        {/* Section 1: Objective & Exposure */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="p-5 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700">
+            <span className="text-xs font-bold uppercase tracking-wider text-slate-400 mb-1 block">
+              Consultation Objective
+            </span>
+            <p className="text-sm font-medium text-slate-800 dark:text-slate-200 leading-relaxed">
+              {data.consultationObjective}
+            </p>
+          </div>
+
+          <div className="p-5 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700">
+            <span className="text-xs font-bold uppercase tracking-wider text-slate-400 mb-1 block">
+              Estimated Financial Exposure
+            </span>
+            <p className="text-sm font-bold text-rose-600 dark:text-rose-400">
+              {data.estimatedFinancialExposure}
+            </p>
+            <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
+              Based on presence of uncapped indemnity, damage waivers, or accelerated rent.
+            </p>
+          </div>
+        </div>
+
+        {/* Section 2: Top Concern Clauses */}
+        <div>
+          <h3 className="text-base font-bold text-slate-900 dark:text-slate-100 font-serif mb-3 flex items-center gap-2">
+            <ShieldAlert className="w-4 h-4 text-rose-500" />
+            Top High-Exposure Clauses to Flag
+          </h3>
+
+          <div className="space-y-3">
+            {data.topConcernClauses.map((clause, idx) => (
+              <div
+                key={idx}
+                className="p-4 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-950/40"
+              >
+                <div className="flex items-center justify-between gap-2 mb-1.5">
+                  <h4 className="text-sm font-bold text-slate-900 dark:text-slate-100">
+                    {idx + 1}. {clause.title}
+                  </h4>
+                  <span className="text-[10px] font-bold uppercase px-2 py-0.5 rounded bg-rose-100 dark:bg-rose-950 text-rose-700 dark:text-rose-300">
+                    High Priority
+                  </span>
+                </div>
+                <p className="text-xs text-slate-600 dark:text-slate-400 mb-2">
+                  <strong className="text-slate-800 dark:text-slate-200">Risk Assessment:</strong> {clause.riskSummary}
+                </p>
+                <div className="text-xs text-legal-700 dark:text-legal-300 bg-legal-50 dark:bg-legal-950/60 p-2.5 rounded-lg border border-legal-100 dark:border-legal-900 font-medium">
+                  <strong>Suggested question for your attorney:</strong> &quot;{clause.suggestedQuestionForLawyer}&quot;
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Section 3: Recommended Questions */}
+        <div>
+          <h3 className="text-base font-bold text-slate-900 dark:text-slate-100 font-serif mb-3 flex items-center gap-2">
+            <HelpCircle className="w-4 h-4 text-amber-500" />
+            Recommended Questions to Ask During Your Consultation
+          </h3>
+
+          <div className="space-y-2">
+            {data.keyQuestionsToAsk.map((q, qIdx) => (
+              <div
+                key={qIdx}
+                className="p-3 bg-slate-50 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-700 rounded-xl text-xs sm:text-sm text-slate-800 dark:text-slate-200 font-medium flex items-start gap-2.5"
+              >
+                <span className="w-5 h-5 rounded-full bg-legal-100 dark:bg-legal-950 text-legal-700 dark:text-legal-300 flex items-center justify-center text-[11px] font-bold flex-shrink-0 mt-0.5">
+                  Q{qIdx + 1}
+                </span>
+                <p>{q}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Section 4: Recommended Exhibits */}
+        <div>
+          <h3 className="text-base font-bold text-slate-900 dark:text-slate-100 font-serif mb-3 flex items-center gap-2">
+            <FileCheck2 className="w-4 h-4 text-emerald-500" />
+            Recommended Supporting Exhibits to Bring
+          </h3>
+
+          <ul className="list-disc list-inside space-y-1 text-xs sm:text-sm text-slate-700 dark:text-slate-300">
+            {data.recommendedExhibits.map((exhibit, eIdx) => (
+              <li key={eIdx}>{exhibit}</li>
+            ))}
+          </ul>
+        </div>
+      </div>
+    </div>
+  );
+}
