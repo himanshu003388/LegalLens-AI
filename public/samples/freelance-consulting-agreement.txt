@@ -1,0 +1,27 @@
+INDEPENDENT CONTRACTOR & PROFESSIONAL SERVICES AGREEMENT
+
+This Independent Contractor Agreement ("Agreement") is made effective as of October 1, 2025, by and between Apex Global Solutions LLC, a Delaware limited liability company ("Client"), and DevSpark Studio LLC ("Contractor").
+
+1. SCOPE OF SERVICES & DELIVERABLES
+Contractor agrees to perform cloud systems architecture and software engineering services as described in Exhibit A. All deliverables must satisfy Client's sole subjective satisfaction before payment is released.
+
+2. COMPENSATION, INVOICING & PAYMENT TERMS
+Client shall compensate Contractor at the rate of $125 per hour, not to exceed $25,000 without prior written approval. Contractor shall submit bi-weekly itemized invoices. Client shall pay approved undisputed invoices on a Net 90 basis. In the event of any billing dispute, Client reserves the right to withhold 100% of the entire invoice until resolution.
+
+3. TERM AND TERMINATION
+This Agreement shall commence on the Effective Date and continue for a period of twelve (12) months. Client may terminate this Agreement immediately at any time with or without cause upon three (3) business days' written notice. Contractor may only terminate this Agreement for material breach, provided Contractor gives Client sixty (60) days' written notice and a sixty (60) day cure period.
+
+4. INTELLECTUAL PROPERTY & WORK FOR HIRE
+All ideas, inventions, code, designs, documentation, and work product developed by Contractor during the term of this Agreement, whether developed alone or jointly with Client, and whether created during or outside normal working hours, shall constitute "work made for hire" and shall become the sole and exclusive property of Client. Contractor unconditionally assigns and transfers to Client all worldwide copyright, patent, and trademark rights, including all pre-existing tools, libraries, frameworks, and developer utilities used in delivering the work.
+
+5. NON-COMPETITION & NON-SOLICITATION
+During the term of this Agreement and for a period of twenty-four (24) months following termination for any reason, Contractor shall not directly or indirectly provide software engineering or cloud consulting services to any business or entity that competes with Client within North America or Western Europe. Contractor shall not solicit, recruit, or hire any employee or contractor of Client for twenty-four (24) months.
+
+6. UNLIMITED INDEMNIFICATION & DEFENSE
+Contractor agrees to defend, indemnify, and hold harmless Client, its affiliates, directors, officers, and employees against any and all claims, liabilities, losses, damages, fines, legal penalties, and reasonable attorney fees arising out of, or resulting from, any act, omission, alleged copyright infringement, or breach of this Agreement by Contractor.
+
+7. LIMITATION OF LIABILITY
+IN NO EVENT SHALL CLIENT BE LIABLE TO CONTRACTOR FOR ANY INDIRECT, INCIDENTAL, SPECIAL, OR CONSEQUENTIAL DAMAGES. CLIENT'S MAXIMUM AGGREGATE LIABILITY ARISING UNDER THIS AGREEMENT SHALL BE STRICTLY LIMITED TO THE AMOUNT ACTUALLY PAID TO CONTRACTOR IN THE THIRTY (30) DAYS PRECEDING THE CLAIM. CONTRACTOR'S LIABILITY UNDER THIS AGREEMENT SHALL BE COMPLETELY UNCAPPED.
+
+8. GOVERNING LAW AND MANDATORY ARBITRATION
+This Agreement shall be construed in accordance with the laws of the State of Delaware, without regard to conflicts of laws. Any dispute arising out of this Agreement shall be resolved exclusively through mandatory individual binding arbitration in Wilmington, Delaware. Contractor explicitly waives any right to a trial by jury or participation in class actions.

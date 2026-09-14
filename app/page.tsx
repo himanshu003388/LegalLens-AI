@@ -8,8 +8,20 @@ import ClauseList from "@/components/ClauseList";
 import ChatPanel from "@/components/ChatPanel";
 import ActionChecklist from "@/components/ActionChecklist";
 import LawyerPrepKit from "@/components/LawyerPrepKit";
+import ScenarioSimulator from "@/components/ScenarioSimulator";
+import LegalGlossary from "@/components/LegalGlossary";
 import { DocumentAnalysis } from "@/lib/types/legal";
-import { FileText, ShieldAlert, MessageSquare, CheckSquare, Briefcase, RefreshCw, AlertCircle } from "lucide-react";
+import {
+  FileText,
+  ShieldAlert,
+  MessageSquare,
+  CheckSquare,
+  Briefcase,
+  RefreshCw,
+  AlertCircle,
+  Compass,
+  BookOpen,
+} from "lucide-react";
 import { getStoredApiKey, getStoredProvider, getApiKeyHeaders } from "@/lib/security/client-keys";
 import { useAnalysis } from "@/context/AnalysisContext";
 
@@ -25,7 +37,9 @@ export default function HomePage() {
   } = useAnalysis();
 
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [activeTab, setActiveTab] = useState<"summary" | "clauses" | "chat" | "checklist" | "prepkit">("summary");
+  const [activeTab, setActiveTab] = useState<
+    "summary" | "clauses" | "simulator" | "glossary" | "chat" | "checklist" | "prepkit"
+  >("summary");
   const [errorMessage, setErrorMessage] = useState<string>("");
 
   const handleDocumentLoaded = async (fileName: string, text: string, anonymizePII: boolean) => {
@@ -194,6 +208,36 @@ export default function HomePage() {
             <button
               type="button"
               role="tab"
+              aria-selected={activeTab === "simulator"}
+              onClick={() => setActiveTab("simulator")}
+              className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition whitespace-nowrap ${
+                activeTab === "simulator"
+                  ? "bg-legal-600 text-white shadow-sm"
+                  : "bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-800"
+              }`}
+            >
+              <Compass className="w-4 h-4" />
+              <span>&quot;What-If&quot; Simulator</span>
+            </button>
+
+            <button
+              type="button"
+              role="tab"
+              aria-selected={activeTab === "glossary"}
+              onClick={() => setActiveTab("glossary")}
+              className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition whitespace-nowrap ${
+                activeTab === "glossary"
+                  ? "bg-legal-600 text-white shadow-sm"
+                  : "bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-800"
+              }`}
+            >
+              <BookOpen className="w-4 h-4" />
+              <span>Legal Glossary</span>
+            </button>
+
+            <button
+              type="button"
+              role="tab"
               aria-selected={activeTab === "chat"}
               onClick={() => setActiveTab("chat")}
               className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition whitespace-nowrap ${
@@ -250,6 +294,15 @@ export default function HomePage() {
                 <ClauseList clauses={analysis.clauses} />
               </div>
             )}
+
+            {activeTab === "simulator" && (
+              <ScenarioSimulator
+                analysis={analysis}
+                documentText={currentText}
+              />
+            )}
+
+            {activeTab === "glossary" && <LegalGlossary />}
 
             {activeTab === "chat" && (
               <ChatPanel

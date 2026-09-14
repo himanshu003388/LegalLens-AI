@@ -134,22 +134,49 @@ export function checkRateLimit(
 }
 
 /**
- * Extracts a client identifier from request headers (Cloudflare, proxies, x-forwarded-for, x-real-ip)
- * or defaults to a fallback localhost key.
+ * Normalizes client IP addresses, grouping IPv6 addresses into /64 subnets
+ * to prevent rate limit circumvention via ephemeral IPv6 rotation.
+ */
+export function normalizeClientIp(rawIp: string): string {
+  const ip = rawIp.trim();
+
+  // IPv6 handling: group into /64 subnet (first 4 16-bit blocks)
+  if (ip.includes(":")) {
+    const segments = ip.split(":");
+    if (segments.length >= 4) {
+      return `${segments.slice(0, 4).join(":")}::/64`;
+    }
+    return ip;
+  }
+
+  // IPv4 or generic string
+  return ip;
+}
+
+/**
+ * Extracts and normalizes a client identifier from request headers
+ * (Cloudflare, proxies, x-forwarded-for, x-real-ip) or defaults to a fallback key.
  *
  * @param headers Standard web Request Headers
- * @returns Sanitized client string identifier
+ * @returns Sanitized, subnet-normalized client identifier
  */
 export function getClientIdentifier(headers: Headers): string {
   const cfConnectingIp = headers.get("cf-connecting-ip");
   if (cfConnectingIp) {
-    return cfConnectingIp.trim();
+    return normalizeClientIp(cfConnectingIp);
   }
 
   const forwardedFor = headers.get("x-forwarded-for");
   if (forwardedFor) {
-    return forwardedFor.split(",")[0].trim();
+    const firstIp = forwardedFor.split(",")[0].trim();
+    return normalizeClientIp(firstIp);
   }
 
-  return headers.get("x-real-ip") || "anonymous-client";
+  const realIp = headers.get("x-real-ip");
+  if (realIp) {
+    return normalizeClientIp(realIp);
+  }
+
+  return "anonymous-client";
 }
+

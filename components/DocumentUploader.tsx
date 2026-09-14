@@ -194,7 +194,7 @@ export default function DocumentUploader({
           <span>Or test immediately with a curated legal sample:</span>
         </p>
 
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
           <button
             type="button"
             onClick={() => loadSample("residential-lease.txt", "Residential Lease Agreement (Illinois)")}
@@ -206,7 +206,7 @@ export default function DocumentUploader({
             </div>
             <div>
               <p className="text-xs font-semibold text-slate-800 dark:text-slate-200">Residential Lease</p>
-              <p className="text-[11px] text-slate-500 dark:text-slate-400">High-risk auto-renew & deposit</p>
+              <p className="text-[11px] text-slate-500 dark:text-slate-400">Auto-renew & deposit</p>
             </div>
           </button>
 
@@ -221,7 +221,7 @@ export default function DocumentUploader({
             </div>
             <div>
               <p className="text-xs font-semibold text-slate-800 dark:text-slate-200">Mutual NDA</p>
-              <p className="text-[11px] text-slate-500 dark:text-slate-400">Confidentiality & survival</p>
+              <p className="text-[11px] text-slate-500 dark:text-slate-400">Trade secret survival</p>
             </div>
           </button>
 
@@ -235,8 +235,38 @@ export default function DocumentUploader({
               <FileText className="w-4 h-4" />
             </div>
             <div>
-              <p className="text-xs font-semibold text-slate-800 dark:text-slate-200">SaaS Services Agreement</p>
-              <p className="text-[11px] text-slate-500 dark:text-slate-400">Liability cap & Net 30 fees</p>
+              <p className="text-xs font-semibold text-slate-800 dark:text-slate-200">SaaS Agreement</p>
+              <p className="text-[11px] text-slate-500 dark:text-slate-400">Liability cap & Net 30</p>
+            </div>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => loadSample("freelance-consulting-agreement.txt", "Freelance Professional Services Agreement")}
+            disabled={isLoading}
+            className="flex items-center gap-2.5 p-3 rounded-xl border border-slate-200 dark:border-slate-700 hover:border-legal-400 dark:hover:border-legal-500 hover:bg-slate-50 dark:hover:bg-slate-800/80 text-left transition group"
+          >
+            <div className="p-2 rounded-lg bg-amber-50 dark:bg-amber-950/60 text-amber-600 dark:text-amber-400 group-hover:bg-amber-100 transition">
+              <FileText className="w-4 h-4" />
+            </div>
+            <div>
+              <p className="text-xs font-semibold text-slate-800 dark:text-slate-200">Freelance MSA</p>
+              <p className="text-[11px] text-slate-500 dark:text-slate-400">IP transfer & Net 90</p>
+            </div>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => loadSample("commercial-lease.txt", "Commercial Triple Net (NNN) Lease")}
+            disabled={isLoading}
+            className="flex items-center gap-2.5 p-3 rounded-xl border border-slate-200 dark:border-slate-700 hover:border-legal-400 dark:hover:border-legal-500 hover:bg-slate-50 dark:hover:bg-slate-800/80 text-left transition group"
+          >
+            <div className="p-2 rounded-lg bg-purple-50 dark:bg-purple-950/60 text-purple-600 dark:text-purple-400 group-hover:bg-purple-100 transition">
+              <FileText className="w-4 h-4" />
+            </div>
+            <div>
+              <p className="text-xs font-semibold text-slate-800 dark:text-slate-200">Commercial Lease</p>
+              <p className="text-[11px] text-slate-500 dark:text-slate-400">Triple net & personal guaranty</p>
             </div>
           </button>
         </div>

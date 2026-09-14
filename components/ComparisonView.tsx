@@ -221,26 +221,54 @@ export default function ComparisonView({
           )}
 
           {/* Redline Diff Viewer */}
-          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 shadow-sm">
-            <h3 className="text-base font-bold text-slate-900 dark:text-slate-100 font-serif mb-4">
-              Line-by-Line Redline Diff (Myers Algorithm)
-            </h3>
-            <div className="bg-slate-950 text-slate-200 rounded-xl p-4 overflow-x-auto text-xs font-mono max-h-[500px]">
+          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 shadow-sm space-y-4">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 dark:border-slate-800 pb-3">
+              <h3 className="text-base font-bold text-slate-900 dark:text-slate-100 font-serif">
+                Line-by-Line Redline Diff (Myers Algorithm)
+              </h3>
+              {/* Color-Blind Accessible Legend */}
+              <div className="flex items-center gap-3 text-[11px] font-mono">
+                <span className="flex items-center gap-1 text-emerald-600 dark:text-emerald-400 font-bold">
+                  <span className="px-1.5 py-0.2 rounded bg-emerald-100 dark:bg-emerald-950 border border-emerald-500/40">[+] ADDED</span>
+                </span>
+                <span className="flex items-center gap-1 text-rose-600 dark:text-rose-400 font-bold">
+                  <span className="px-1.5 py-0.2 rounded bg-rose-100 dark:bg-rose-950 border border-rose-500/40 line-through">[-] DELETED</span>
+                </span>
+              </div>
+            </div>
+
+            <div
+              className="bg-slate-950 text-slate-200 rounded-xl p-4 overflow-x-auto text-xs font-mono max-h-[550px] border border-slate-800"
+              role="region"
+              aria-label="Contract Redline Differences"
+            >
               {comparisonResult.diffChunks.map((chunk, idx) => (
                 <div
                   key={idx}
-                  className={`py-0.5 px-2 rounded ${
+                  className={`py-1 px-2 rounded flex items-start ${
                     chunk.type === "added"
-                      ? "bg-emerald-950/80 text-emerald-300 border-l-2 border-emerald-500"
+                      ? "bg-emerald-950/80 text-emerald-200 border-l-4 border-emerald-500 font-medium"
                       : chunk.type === "removed"
-                      ? "bg-rose-950/80 text-rose-300 line-through border-l-2 border-rose-500 opacity-75"
-                      : "text-slate-400"
+                      ? "bg-rose-950/80 text-rose-200 border-l-4 border-rose-500 line-through opacity-85 bg-[repeating-linear-gradient(45deg,transparent,transparent_6px,rgba(239,68,68,0.1)_6px,rgba(239,68,68,0.1)_12px)]"
+                      : "text-slate-400 hover:bg-slate-900/50"
                   }`}
                 >
-                  <span className="inline-block w-8 text-slate-600 select-none">
-                    {chunk.type === "added" ? "+" : chunk.type === "removed" ? "-" : " "}
+                  <span className="inline-block flex-shrink-0 select-none mr-2">
+                    {chunk.type === "added" ? (
+                      <span className="px-1 py-0.5 rounded bg-emerald-900 text-[10px] font-bold text-emerald-200 border border-emerald-600">
+                        [+] ADD
+                      </span>
+                    ) : chunk.type === "removed" ? (
+                      <span className="px-1 py-0.5 rounded bg-rose-900 text-[10px] font-bold text-rose-200 border border-rose-600">
+                        [-] DEL
+                      </span>
+                    ) : (
+                      <span className="text-[10px] text-slate-600 font-mono px-1">
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                      </span>
+                    )}
                   </span>
-                  <span>{chunk.content || " "}</span>
+                  <span className="flex-1 break-all">{chunk.content || " "}</span>
                 </div>
               ))}
             </div>

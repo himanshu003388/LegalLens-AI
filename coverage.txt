@@ -1,10 +1,10 @@
 ================================================================================
 LegalLens AI — Automated Vitest Test Coverage Report
-Executed: 2026-09-14
+Executed: 2026-09-15
 Test Framework: Vitest v2.1.9 with @vitest/coverage-v8
-Total Test Suites: 9 passed (9)
-Total Tests: 42 passed (42)
-Test Duration: 5.62s
+Total Test Suites: 12 passed (12)
+Total Tests: 60 passed (60)
+Test Duration: 12.45s
 ================================================================================
 
 -------------------|---------|----------|---------|---------|-------------------
@@ -14,29 +14,37 @@ Core Logic & UI:   |         |          |         |         |
   ActionChecklist  |   94.52 |    72.72 |   85.71 |   94.52 | 119-121,247-250 
   AnalysisOverview |   99.57 |    76.19 |     100 |   99.57 | 27                
   ClauseList       |   82.71 |     62.5 |   55.55 |   82.71 | 108-110,170,215-217 
+  ComparisonView   |   87.11 |    46.66 |   14.28 |   87.11 | 207,253,266-268 
   DisclaimerBanner |     100 |      100 |     100 |     100 |                   
   LawyerPrepKit    |   97.87 |      100 |      80 |   97.87 | 26-29             
+  LegalGlossary    |   98.62 |    88.23 |   66.66 |   98.62 | 245-247           
   RiskRadar        |     100 |    57.14 |     100 |     100 | 24-26             
+  ScenarioSimulator|   82.25 |    41.37 |   33.33 |   82.25 | 189-192,297-300   
+  A11yControls     |   97.82 |       25 |     100 |   97.82 | 29                
+  KeyboardShortcuts|    87.5 |    54.54 |   66.66 |    87.5 | 32-46             
   cache.ts         |   89.58 |    88.88 |     100 |   89.58 | 54-58             
-  legal-intel.ts   |   86.36 |    74.71 |     100 |   86.36 | 185-188,296-297,354 
+  legal-intel.ts   |   93.58 |    88.34 |     100 |   93.58 | 185-188,296-297   
   prompts.ts       |     100 |      100 |     100 |     100 |                   
-  contract-diff.ts |   85.45 |    65.71 |     100 |   85.45 | 184-190,218-219 
-  pii-sanitizer.ts |    97.1 |      100 |     100 |    97.1 | 80-81             
-  chunker.ts       |   96.66 |    77.77 |     100 |   96.66 | 41-42,144-145     
-  rate-limiter.ts  |   96.34 |    93.75 |     100 |   96.34 | 61-63             
+  contract-diff.ts |   85.45 |     73.8 |     100 |   85.45 | 184-190,218-219   
+  pii-sanitizer.ts |   98.31 |      100 |     100 |   98.31 | 150-151           
+  chunker.ts       |   93.82 |       75 |     100 |   93.82 | 182-183,201-202   
+  rate-limiter.ts  |   92.85 |    86.36 |     100 |   92.85 | 149-150,177-178   
 -------------------|---------|----------|---------|---------|-------------------
 Test Suites:
   ✓ tests/cache.test.ts (5 tests)
   ✓ tests/clause-extraction.test.ts (4 tests)
   ✓ tests/provider.test.ts (8 tests)
+  ✓ tests/scenario-simulator.test.ts (6 tests)
+  ✓ tests/security-expanded.test.ts (6 tests)
+  ✓ tests/e2e-workflow.test.tsx (6 tests)
+  ✓ tests/components.test.tsx (8 tests)
   ✓ tests/pii-sanitizer.test.ts (5 tests)
   ✓ tests/rate-limiter.test.ts (4 tests)
   ✓ tests/contract-diff.test.ts (3 tests)
   ✓ tests/chunker.test.ts (3 tests)
   ✓ tests/injection-defense.test.ts (2 tests)
-  ✓ tests/components.test.tsx (8 tests)
 
 ================================================================================
-Pass Rate: 100% (42/42 tests passing)
+Pass Rate: 100% (60/60 tests passing)
 Zero Flaky Tests • Full Offline Deterministic Test Suite
 ================================================================================

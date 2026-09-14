@@ -170,3 +170,33 @@ export interface ComparisonAnalysis {
     similarityPercentage: number;
   };
 }
+
+/**
+ * Interactive What-If hypothetical legal scenario evaluation.
+ */
+export interface ScenarioSimulation {
+  id: string;
+  title: string;
+  prompt: string;
+  applicableClauses: string[];
+  riskOutcome: "FAVORABLE" | "MODERATE_RISK" | "SEVERE_RISK";
+  plainEnglishExplanation: string;
+  financialExposureEstimate?: string;
+  actionableRemedy: string;
+  suggestedNegotiationCounter?: string;
+}
+
+/**
+ * Definition and plain-English breakdown of complex legal terms.
+ */
+export interface LegalTermDefinition {
+  term: string;
+  phoneticSpelling?: string;
+  category: ClauseCategory;
+  formalDefinition: string;
+  plainEnglishExplanation: string;
+  realWorldExample: string;
+  dangerLevel: "LOW" | "MEDIUM" | "HIGH";
+  whatToLookFor: string;
+}
+
